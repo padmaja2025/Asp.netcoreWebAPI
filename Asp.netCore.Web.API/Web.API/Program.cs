@@ -1,4 +1,6 @@
 
+using Microsoft.AspNetCore.StaticFiles;
+
 namespace Web.API
 {
     public class Program
@@ -9,10 +11,28 @@ namespace Web.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+
+            {
+                options.ReturnHttpNotAcceptable = true;
+            });
+
+            // add custom problem details middleware
+            builder.Services.AddProblemDetails(options =>
+            {
+                options.CustomizeProblemDetails = ctx =>
+                {
+                    ctx.ProblemDetails.Extensions.Add("server", Environment.MachineName);
+                    ctx.ProblemDetails.Extensions.Add("environment", builder.Environment.EnvironmentName);
+                };
+            });
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
             var app = builder.Build();
 
