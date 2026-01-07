@@ -15,7 +15,9 @@ namespace Web.API
 
             {
                 options.ReturnHttpNotAcceptable = true;
-            });
+
+            }).AddNewtonsoftJson()
+                .AddXmlDataContractSerializerFormatters();
 
             // add custom problem details middleware
             builder.Services.AddProblemDetails(options =>
